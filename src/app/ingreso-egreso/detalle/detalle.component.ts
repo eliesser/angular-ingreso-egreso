@@ -2,13 +2,12 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 
-import { AppState } from '../../app.reducer';
+import { AppStateE } from '../ingreso-egreso.reducer';
 
 import Swal from 'sweetalert2';
 
 import { IngresoEgreso } from '../ingreso-egreso.model';
 import { IngresoEgresoService } from '../ingreso-egreso.service';
-
 @Component({
   selector: 'app-detalle',
   templateUrl: './detalle.component.html',
@@ -19,7 +18,7 @@ export class DetalleComponent implements OnInit, OnDestroy {
   items: IngresoEgreso[] = [];
 
   constructor(
-    private store: Store<AppState>,
+    private store: Store<AppStateE>,
     private ingresoEgresoService: IngresoEgresoService
   ) {}
 

@@ -1,16 +1,17 @@
 import { Injectable } from '@angular/core';
-
-import { CanActivate, UrlTree } from '@angular/router';
+import { CanLoad } from '@angular/router';
 import { Observable } from 'rxjs';
+import { take } from 'rxjs/operators';
+
 import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AutGuard implements CanActivate {
+export class AutGuard implements CanLoad {
   constructor(private authService: AuthService) {}
 
-  canActivate(): Observable<boolean | UrlTree> {
-    return this.authService.isAuth();
+  canLoad(): Observable<boolean> {
+    return this.authService.isAuth().pipe(take(1));
   }
 }

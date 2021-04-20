@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 
-import { AppState } from '../../app.reducer';
+import { AppStateE } from '../ingreso-egreso.reducer';
 
 import { IngresoEgreso } from '../ingreso-egreso.model';
 
@@ -24,7 +24,7 @@ export class EstadisticaComponent implements OnInit {
 
   doughnutChartData: number[] = [];
 
-  constructor(private store: Store<AppState>) {}
+  constructor(private store: Store<AppStateE>) {}
 
   ngOnInit(): void {
     this.subscription = this.store
