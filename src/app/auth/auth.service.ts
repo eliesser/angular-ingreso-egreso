@@ -13,13 +13,14 @@ import { User } from './user.model';
 import { AppState } from '../app.reducer';
 
 import * as fromUI from '../shared/ui.actions';
-import { SetUserAction } from './auth.actions';
+import { SetUserAction, UnsetUserAction } from './auth.actions';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  subscriotion: Subscription = new Subscription();
+  private subscriotion: Subscription = new Subscription();
+  private user: User;
 
   constructor(
     public afAuth: AngularFireAuth,
@@ -29,21 +30,22 @@ export class AuthService {
   ) {}
 
   initAutListener() {
-    this.subscriotion = this.afAuth.authState.subscribe(
-      (fbUser: firebase.User) => {
-        if (fbUser) {
-          this.afDB
-            .doc(`${fbUser.uid}/usuario`)
-            .valueChanges()
-            .subscribe((usuarioObj: any) => {
-              const newUser = new User(usuarioObj);
-              this.store.dispatch(new SetUserAction(newUser));
-            });
-        } else {
-          this.subscriotion.unsubscribe();
-        }
+    this.afAuth.authState.subscribe((fbUser: firebase.User) => {
+      console.log(fbUser);
+      if (fbUser) {
+        this.subscriotion = this.afDB
+          .doc(`${fbUser.uid}/usuario`)
+          .valueChanges()
+          .subscribe((usuarioObj: any) => {
+            const newUser = new User(usuarioObj);
+            this.store.dispatch(new SetUserAction(newUser));
+            this.user = newUser;
+          });
+      } else {
+        this.user = null;
+        this.subscriotion.unsubscribe();
       }
-    );
+    });
   }
 
   createUser(nombre: string, email: string, password: string) {
@@ -90,6 +92,9 @@ export class AuthService {
 
   loguot() {
     this.afAuth.signOut();
+
+    this.store.dispatch(new UnsetUserAction());
+
     this.router.navigate(['/login']);
   }
 
@@ -102,5 +107,9 @@ export class AuthService {
         return fbUser != null;
       })
     );
+  }
+
+  getUser() {
+    return { ...this.user };
   }
 }
